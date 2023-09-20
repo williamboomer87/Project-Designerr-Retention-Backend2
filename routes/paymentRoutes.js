@@ -4,6 +4,6 @@ const { createPayment, getPaymentData } = require('../controllers/paymentControl
 
 router.post('/create-payment-intent', createPayment);
 
-router.post('/get-payment-data', express.raw({type: 'application/json'}), getPaymentData);
+// router.post('/get-payment-data', express.raw({type: 'application/json'}), getPaymentData);
 
 module.exports = router;
