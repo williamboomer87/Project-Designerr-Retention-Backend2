@@ -10,3 +10,9 @@ functions:
     handler: index.handler
     events:
       - httpApi: '*'
+    environment: 
+      DB_NAME: tvmqfksz
+      DB_USERNAME: tvmqfksz
+      DB_PASSWORD: td8O8J5AmoJYXwbcYspn8enku78pCJ85
+      DB_HOST: tyke.db.elephantsql.com
+      DB_DIALECT: postgres
