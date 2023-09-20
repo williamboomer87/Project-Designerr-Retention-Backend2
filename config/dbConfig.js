@@ -1,6 +1,10 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
+console.log('-------------------')
+console.log(process.env.DB_DIALECT)
+console.log('-------------------')
+
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USERNAME,
@@ -10,6 +14,7 @@ const sequelize = new Sequelize(
     dialect: process.env.DB_DIALECT,
   }
 );
+
 
 module.exports = sequelize;
 
