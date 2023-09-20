@@ -9,7 +9,9 @@ const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 
-// Middleware
+app.use('/payment', paymentRoutes);
+
+// Middleware (Stripe routes should be before this)
 app.use(express.json());
 
 app.use(cors());
@@ -19,7 +21,6 @@ app.use('/auth', authRoutes);
 
 app.use('/chat', chatRoutes);
 
-app.use('/payment', paymentRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello, World!');
