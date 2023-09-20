@@ -7,6 +7,7 @@ const endpointSecret = 'whsec_AuoLwve0JRzsbCWkWlQuzF3JckvH2FH9';
 const getPaymentData = async (req, res) => {
 
   let event = req.body;
+  console.log(req.body)
   if (endpointSecret) {
     const signature = req.headers['stripe-signature'];
 
