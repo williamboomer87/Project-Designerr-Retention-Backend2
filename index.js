@@ -1,19 +1,25 @@
 const serverless = require("serverless-http");
-const express = require("express");
+const express = require('express');
+const cors = require('cors');
+
 const app = express();
+const port = 8080;
 
-app.get("/", (req, res, next) => {
-  return res.status(200).json({
-    message: "Hello from root!",
-  });
-});
+const authRoutes = require('./routes/authRoutes');
+const chatRoutes = require('./routes/chatRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
+// Middleware
+app.use(express.json());
 
-app.get("/path", (req, res, next) => {
-  return res.status(200).json({
-    message: "Hello from path!",
-  });
-});
+app.use(cors());
+
+// Routes
+app.use('/auth', authRoutes);
+
+app.use('/chat', chatRoutes);
+
+app.use('/payment', paymentRoutes);
 
 app.use((req, res, next) => {
   return res.status(404).json({
@@ -21,10 +27,12 @@ app.use((req, res, next) => {
   });
 });
 
-module.exports.handler = serverless(app);
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
 
-// const port = 8080;
-// app.listen(port, () => {
-//   console.log(`Server is running on http://localhost:${port}`);
-// });
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
 
+// module.exports.handler = serverless(app);

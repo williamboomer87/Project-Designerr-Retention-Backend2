@@ -1,9 +1,35 @@
 {
-  "name": "test",
+  "name": "designerbk",
   "version": "1.0.0",
-  "description": "",
+  "description": "<!-- title: 'AWS Simple HTTP Endpoint example in NodeJS' description: 'This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.' layout: Doc framework: v3 platform: AWS language: nodeJS authorLink: 'https://github.com/serverless' authorName: 'Serverless, inc.' authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4' -->",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.395.0",
+    "aws-sdk": "^2.1441.0",
+    "axios": "^1.4.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "serverless-http": "^3.1.1"
+    "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.1",
+    "multer": "^1.4.5-lts.1",
+    "multer-s3": "^3.0.1",
+    "pg": "^8.11.2",
+    "sequelize": "^6.32.1",
+    "serverless-http": "^3.2.0",
+    "stripe": "^13.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
