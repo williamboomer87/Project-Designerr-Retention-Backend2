@@ -23,7 +23,12 @@ const createPayment = async (req, res) => {
   });
 }
 
+const getPaymentData = async (req, res) => {
+  return res.status(200).json({ success: true });
+}
+
 
 module.exports = {
   createPayment,
+  getPaymentData
 };
