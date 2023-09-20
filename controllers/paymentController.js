@@ -10,13 +10,10 @@ const getPaymentData = async (req, res) => {
   let event = req.body;
   if (endpointSecret) {
     const signature = req.headers['stripe-signature'];
-    let body = JSON.stringify(req.body);
-
-    console.log(req.body)
 
     try {
       event = stripe.webhooks.constructEvent(
-        body,
+        req.body,
         signature,
         endpointSecret
       );
