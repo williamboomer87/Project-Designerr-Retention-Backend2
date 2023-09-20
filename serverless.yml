@@ -11,8 +11,8 @@ functions:
     events:
       - httpApi: '*'
     environment: 
-      DB_NAME: tvmqfksz
-      DB_USERNAME: tvmqfksz
-      DB_PASSWORD: td8O8J5AmoJYXwbcYspn8enku78pCJ85
-      DB_HOST: tyke.db.elephantsql.com
-      DB_DIALECT: postgres
+      DB_NAME: ${{ DB_NAME }}
+      DB_USERNAME: ${{ DB_USERNAME }}
+      DB_PASSWORD: ${{ DB_PASSWORD }}
+      DB_HOST: ${{ DB_HOST }}
+      DB_DIALECT: ${{ DB_DIALECT }}
