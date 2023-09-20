@@ -21,6 +21,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Replace environment variables in .env file
+        run: |
+          sed -i 's/REPLACE_ME_DB_NAME/${{ secrets.DB_NAME }}/g' .env
+          sed -i 's/REPLACE_ME_DB_USERNAME/${{ secrets.DB_USERNAME }}/g' .env
+          sed -i 's/REPLACE_ME_DB_PASSWORD/${{ secrets.DB_PASSWORD }}/g' .env
+          sed -i 's/REPLACE_ME_DB_HOST/${{ secrets.DB_HOST }}/g' .env
+          sed -i 's/REPLACE_ME_DB_DIALECT/${{ secrets.DB_DIALECT }}/g' .env  
+
       - name: Deploy to AWS Lambda
         run: npx serverless deploy
         env:
