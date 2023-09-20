@@ -10,5 +10,3 @@ functions:
     handler: index.handler
     events:
       - httpApi: '*'
-    environment:
-      DB_DIALECT: ${secrets.DB_DIALECT}
