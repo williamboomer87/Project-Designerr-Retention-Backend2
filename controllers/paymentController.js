@@ -2,7 +2,7 @@
 require('dotenv').config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-const endpointSecret = 'we_1NsVeeJYVRzxBOJIbpbIxvCG';
+const endpointSecret = 'whsec_AuoLwve0JRzsbCWkWlQuzF3JckvH2FH9';
 
 const getPaymentData = async (req, res) => {
   console.log('-----------------')
