@@ -24,6 +24,15 @@ const createPayment = async (req, res) => {
 }
 
 const getPaymentData = async (req, res) => {
+
+  let event = req.body;
+
+  console.log('-----------------')
+  console.log('Payment done')
+  console.log('-----------------')
+
+  
+
   return res.status(200).json({ success: true });
 }
 
