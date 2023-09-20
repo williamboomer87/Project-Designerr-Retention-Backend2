@@ -22,7 +22,7 @@ const getPaymentData = async (req, res) => {
       );
     } catch (err) {
       console.log(`Webhook signature verification failed.`, err.message);
-      return response.sendStatus(400);
+      return res.sendStatus(400);
     }
   }
 
@@ -47,7 +47,7 @@ const getPaymentData = async (req, res) => {
   console.log('-----------------')
 
   // Return a 200 response to acknowledge receipt of the event
-  response.send();
+  res.send();
 }
 
 
