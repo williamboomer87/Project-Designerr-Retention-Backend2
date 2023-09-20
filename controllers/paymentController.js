@@ -7,7 +7,10 @@ const endpointSecret = 'whsec_AuoLwve0JRzsbCWkWlQuzF3JckvH2FH9';
 const getPaymentData = async (req, res) => {
 
   let event = req.body;
-  console.log(req.body)
+  console.log('------------------------')
+  const requestBodyString = req.body.toString('utf-8');
+  console.log(JSON.parse(requestBodyString));
+  console.log('------------------------')
   if (endpointSecret) {
     const signature = req.headers['stripe-signature'];
 
@@ -42,7 +45,6 @@ const getPaymentData = async (req, res) => {
       console.log(`Unhandled event type ${event.type}.`);
   }
 
-  console.log('-----------------')
 
   // Return a 200 response to acknowledge receipt of the event
   res.send();
