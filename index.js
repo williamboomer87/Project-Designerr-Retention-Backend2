@@ -8,6 +8,7 @@ app.get("/", (req, res, next) => {
   });
 });
 
+
 app.get("/path", (req, res, next) => {
   return res.status(200).json({
     message: "Hello from path!",
@@ -20,10 +21,10 @@ app.use((req, res, next) => {
   });
 });
 
-// module.exports.handler = serverless(app);
+module.exports.handler = serverless(app);
 
-const port = 8080;
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+// const port = 8080;
+// app.listen(port, () => {
+//   console.log(`Server is running on http://localhost:${port}`);
+// });
 
