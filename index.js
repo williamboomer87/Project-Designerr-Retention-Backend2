@@ -13,6 +13,9 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const endpointSecret = 'whsec_AuoLwve0JRzsbCWkWlQuzF3JckvH2FH9';
 
+// Middleware
+app.use(express.json());
+
 app.post('/payment/get-payment-data', express.raw({ type: 'application/json' }), (request, response) => {
   let event = request.body;
   if (endpointSecret) {
@@ -53,8 +56,7 @@ app.post('/payment/get-payment-data', express.raw({ type: 'application/json' }),
 });
 
 
-// Middleware
-app.use(express.json());
+
 
 app.use(cors());
 
