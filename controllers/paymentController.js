@@ -26,23 +26,14 @@ const createPayment = async (req, res) => {
 }
 
 const getPaymentData = async (req, res) => {
+  console.log('-----------------')
 
-  // let event = req.body;
-
-  // console.log('-----------------')
-  // console.log('Payment done')
-  // console.log('-----------------')
-
-
-
-  // return res.status(200).json({ success: true });
-
-  let event = request.body;
+  let event = req.body;
   if (endpointSecret) {
-    const signature = request.headers['stripe-signature'];
+    const signature = req.headers['stripe-signature'];
     try {
       event = stripe.webhooks.constructEvent(
-        request.body,
+        req.body,
         signature,
         endpointSecret
       );
@@ -69,6 +60,8 @@ const getPaymentData = async (req, res) => {
       // Unexpected event type
       console.log(`Unhandled event type ${event.type}.`);
   }
+
+  console.log('-----------------')
 
   // Return a 200 response to acknowledge receipt of the event
   response.send();
