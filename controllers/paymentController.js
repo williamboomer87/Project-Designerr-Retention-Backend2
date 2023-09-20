@@ -6,6 +6,7 @@ const endpointSecret = 'we_1NsVeeJYVRzxBOJIbpbIxvCG';
 
 const getPaymentData = async (req, res) => {
   console.log('-----------------')
+  console.log('Raw Request Body:', req.rawBody);
 
   let event = req.body;
   if (endpointSecret) {

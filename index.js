@@ -10,7 +10,7 @@ const chatRoutes = require('./routes/chatRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 
 // Middleware
-// app.use(express.json());
+app.use(express.json());
 
 app.use(cors());
 
