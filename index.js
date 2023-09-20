@@ -21,14 +21,14 @@ app.use('/chat', chatRoutes);
 
 app.use('/payment', paymentRoutes);
 
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
+
 app.use((req, res, next) => {
   return res.status(404).json({
     error: "Not Found",
   });
-});
-
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
 });
 
 // app.listen(port, () => {
