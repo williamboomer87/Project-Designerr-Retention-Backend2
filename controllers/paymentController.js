@@ -7,10 +7,14 @@ const endpointSecret = 'whsec_AuoLwve0JRzsbCWkWlQuzF3JckvH2FH9';
 const getPaymentData = async (req, res) => {
 
   let event = req.body;
-  console.log('------------------------')
-  const requestBodyString = req.body.toString('utf-8');
-  console.log(JSON.parse(requestBodyString));
-  console.log('------------------------')
+
+  const eventData = event.data.object; 
+  const tokenMetadata = eventData.metadata.token;
+
+  console.log('--------------------');
+  console.log('Token Metadata:', tokenMetadata);
+  console.log('--------------------');
+
   if (endpointSecret) {
     const signature = req.headers['stripe-signature'];
 
@@ -56,7 +60,7 @@ const calculateOrderAmount = (items) => {
 };
 
 const createPayment = async (req, res) => {
-  const { items } = req.body;
+  const { items, token } = req.body;
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
@@ -64,6 +68,9 @@ const createPayment = async (req, res) => {
     currency: "eur",
     automatic_payment_methods: {
       enabled: true,
+    },
+    metadata: {
+      token: token,
     },
   });
 

@@ -13,7 +13,7 @@ const stripehookRoutes = require('./routes/stripehookRoutes');
 
 app.use('/stripehooks', stripehookRoutes);
 
-// Middleware
+// Middleware (webhooks are added before the middleware)
 app.use(express.json());
 
 app.use(cors());
