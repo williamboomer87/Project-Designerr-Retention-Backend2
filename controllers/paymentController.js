@@ -1,8 +1,10 @@
 
 require('dotenv').config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-
 const endpointSecret = 'whsec_AuoLwve0JRzsbCWkWlQuzF3JckvH2FH9';
+const Payment = require('../models/payment');
+const jwt = require('jsonwebtoken');
+const { validationResult } = require('express-validator');
 
 const getPaymentData = async (req, res) => {
 
@@ -46,6 +48,9 @@ const getPaymentData = async (req, res) => {
   res.send();
 }
 
+const handlePaymentIntentSucceeded = (paymentIntent) => {
+
+}
 
 const calculateOrderAmount = (items) => {
   return 1400;
@@ -71,9 +76,94 @@ const createPayment = async (req, res) => {
   });
 }
 
+const savePayment = async (req, res) => {
+  const { paymentIntent, token } = req.body;
+
+  var errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg);
+    return res.status(400).json({ success: false, errors: errorMessages });
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const userId = decodedToken.userId;
+
+    let amount = paymentIntent.amount / 100;
+
+    const payment = await Payment.create({
+      user_id: userId,
+      amount: amount,
+      status: paymentIntent.status
+    });
+
+    res.status(200).json({ success: true });
+
+  } catch (error) {
+    if (error instanceof jwt.JsonWebTokenError) {
+      // Handle JWT error
+      return res.status(400).json({
+        success: false, errors: {
+          error: 'Invalid JWT token: ' + error.message
+        }
+      });
+    } else {
+      return res.status(500).json({
+        success: false, errors: {
+          "Error": error.message
+        }
+      });
+    }
+  }
+
+  res.send();
+}
+
+const getUserPayment = async (req, res) => {
+  const { token } = req.body;
+
+  var errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg);
+    return res.status(400).json({ success: false, errors: errorMessages });
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const userId = decodedToken.userId;
+
+    const payments = await Payment.findAll({
+      where: {
+        user_id: userId,
+      },
+    });
+
+    res.status(201).json({ success: true, data: { payments: payments } });
+
+  } catch (error) {
+    if (error instanceof jwt.JsonWebTokenError) {
+      // Handle JWT error
+      return res.status(400).json({
+        success: false, errors: {
+          error: 'Invalid JWT token: ' + error.message
+        }
+      });
+    } else {
+      return res.status(500).json({
+        success: false, errors: {
+          "Error": error.message
+        }
+      });
+    }
+  }
+
+  res.send();
+}
 
 
 module.exports = {
   createPayment,
-  getPaymentData
+  getPaymentData,
+  savePayment,
+  getUserPayment
 };
