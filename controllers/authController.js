@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const User = require('../models/user');
+const Payment = require('../models/payment');
 require('dotenv').config();
 const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid');
@@ -103,7 +104,10 @@ const getProfile = async (req, res) => {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const userId = decodedToken.userId;
 
-    const user = await User.findByPk(userId);
+    // const user = await User.findByPk(userId);
+    const user = await User.findByPk(userId, {
+      include: [{ model: Payment }],
+    });
     if (!user) {
       return res.status(400).json({ success: false, errors: "No user for this id" });
     }

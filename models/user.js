@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 // const bcrypt = require('bcrypt');
 const bcrypt = require('bcryptjs');
-
 const sequelize = require('../config/dbConfig');
+const Payment = require('./Payment'); 
 
 const User = sequelize.define('User', {
   name: {
@@ -74,6 +74,8 @@ User.beforeCreate(async (user) => {
   const hashedPassword = await bcrypt.hashSync(user.password, 10);
   user.password = hashedPassword;
 });
+
+User.hasMany(Payment, { foreignKey: 'user_id' }); //
 
 // Hash the password before saving the user
 // User.beforeUpdate(async (user) => {
