@@ -110,6 +110,7 @@ const getProfile = async (req, res) => {
     });
     if (!user) {
       return res.status(400).json({ success: false, errors: "No user for this id" });
+      
     }
 
     res.status(200).json({ success: true, user: user });

@@ -5,9 +5,13 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const Chat = require('../models/chat');
 const Message = require('../models/message');
+const User = require('../models/user');
+const Payment = require('../models/payment');
+const { v4: uuidv4 } = require('uuid');
+
 
 const saveChat = async (req, res) => {
-  const { token, prompt, imageUrl } = req.body;
+  const { token, content, imageUrl, chatkey, sender, newchat } = req.body;
 
   var errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -19,63 +23,113 @@ const saveChat = async (req, res) => {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const userId = decodedToken.userId;
 
-    const newChat = await Chat.create({
-      user_id: userId,
-      prompt: prompt,
-    });
-
-    const newChatId = newChat.id;
-
-    const newMessage1 = await Message.create({
-      chat_id: newChatId,
-      image_url: null,
-      content: "User:" + prompt,
-    });
-
-    (async () => {
-      // Replace with your image URL
-      const uploadedUrl = await uploadImageToS3(imageUrl);
-
-      if (uploadedUrl !== null) {
-        console.log('Uploaded URL:', uploadedUrl);
-        const newMessage2 = await Message.create({
-          chat_id: newChatId,
-          image_url: uploadedUrl,
-          content: "AI: Noted on that... Please wait in a bit, Thanks!",
-        });
-      } else {
-        console.log('Image upload failed.');
-      }
-    })();
-
-    const newMessage3 = await Message.create({
-      chat_id: newChatId,
-      image_url: null,
-      content: "AI: Thank you for waiting! Kindly see the results below",
-    });
-
-
-    // console.log('User ID:', userId);
-  } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError) {
-      // Handle JWT error
-      return res.status(400).json({
-        success: false, errors: {
-          "jwt error": 'Invalid JWT token: ' + error.message
-        }
+    if (newchat && chatkey) {
+      const newChat = await Chat.create({
+        chatkey: chatkey,
+        user_id: userId,
+        prompt: content,
       });
-    } else {
-      // Handle other errors
-      return res.status(400).json({
-        success: false, errors: {
-          "jwt error": 'Error: ' + error.message
-        }
+
+      const newChatId = newChat.id;
+
+      const newMessage = await Message.create({
+        chat_id: newChatId,
+        content: "User : " + content,
+      });
+    } else if (chatkey) {
+      const chat = await Chat.findOne({
+        where: {
+          chatkey: chatkey,
+          user_id: userId
+        },
+      });
+
+      if (!chat) {
+        return res.status(500).json({ success: false, error: 'No chat with this key' });
+      }
+
+      const newMessage = await Message.create({
+        chat_id: chat.id,
+        content: sender + ": " + content,
       });
     }
-  }
 
-  return res.status(200).json({ success: true });
-};
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+// const saveChat = async (req, res) => {
+//   const { token, prompt, imageUrl } = req.body;
+
+//   var errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     const errorMessages = errors.array().map(error => error.msg);
+//     return res.status(400).json({ success: false, errors: errorMessages });
+//   }
+
+//   try {
+//     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+//     const userId = decodedToken.userId;
+
+//     const newChat = await Chat.create({
+//       user_id: userId,
+//       prompt: prompt,
+//     });
+
+//     const newChatId = newChat.id;
+
+//     const newMessage1 = await Message.create({
+//       chat_id: newChatId,
+//       image_url: null,
+//       content: "User:" + prompt,
+//     });
+
+//     (async () => {
+//       // Replace with your image URL
+//       const uploadedUrl = await uploadImageToS3(imageUrl);
+
+//       if (uploadedUrl !== null) {
+//         console.log('Uploaded URL:', uploadedUrl);
+//         const newMessage2 = await Message.create({
+//           chat_id: newChatId,
+//           image_url: uploadedUrl,
+//           content: "AI: Noted on that... Please wait in a bit, Thanks!",
+//         });
+//       } else {
+//         console.log('Image upload failed.');
+//       }
+//     })();
+
+//     const newMessage3 = await Message.create({
+//       chat_id: newChatId,
+//       image_url: null,
+//       content: "AI: Thank you for waiting! Kindly see the results below",
+//     });
+
+
+//     // console.log('User ID:', userId);
+//   } catch (error) {
+//     if (error instanceof jwt.JsonWebTokenError) {
+//       // Handle JWT error
+//       return res.status(400).json({
+//         success: false, errors: {
+//           "jwt error": 'Invalid JWT token: ' + error.message
+//         }
+//       });
+//     } else {
+//       // Handle other errors
+//       return res.status(400).json({
+//         success: false, errors: {
+//           "jwt error": 'Error: ' + error.message
+//         }
+//       });
+//     }
+//   }
+
+//   return res.status(200).json({ success: true });
+// };
 
 
 const uploadImageToS3 = async (imageUrl) => {
@@ -156,9 +210,35 @@ const imgUpload = async (req, res) => {
     });
 };
 
+const prevoiusChats = async (req, res) => {
+  const { token } = req.body;
+
+  var errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg);
+    return res.status(400).json({ success: false, errors: errorMessages });
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const userId = decodedToken.userId;
+
+    const user = await User.findByPk(userId, {
+      include: [{ model: Chat }],
+    });
+    if (!user) {
+      return res.status(400).json({ success: false, errors: "No user for this id" });
+    }
+
+    return res.status(200).json({ success: true, user: user });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}
 
 
 module.exports = {
   imgUpload,
   saveChat,
+  prevoiusChats
 };
