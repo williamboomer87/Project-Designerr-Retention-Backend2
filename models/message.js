@@ -16,6 +16,9 @@ const Message = sequelize.define('Message', {
   image_url: {
     type: DataTypes.STRING,
   },
+  owner: {
+    type: DataTypes.STRING,
+  },
   content: {
     type: DataTypes.TEXT,
   },

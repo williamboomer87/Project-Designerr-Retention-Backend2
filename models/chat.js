@@ -26,5 +26,6 @@ const Chat = sequelize.define('Chat', {
   timestamps: true,
 });
 
+Chat.hasMany(Message, { foreignKey: 'chat_id' });
 
 module.exports = Chat;

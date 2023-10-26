@@ -9,6 +9,38 @@ const User = require('../models/user');
 const Payment = require('../models/payment');
 const { v4: uuidv4 } = require('uuid');
 
+const getChat = async (req, res) => {
+  const { token, chatkey } = req.body;
+
+  var errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg);
+    return res.status(400).json({ success: false, errors: errorMessages });
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const userId = decodedToken.userId;
+
+    const chat = await Chat.findOne({
+      where: {
+        chatkey: chatkey,
+        user_id: userId
+      },
+      include: [{
+        model: Message
+      }]
+    })  
+
+    if (!chat) {
+      return res.status(500).json({ success: false, error: 'No chat with this key' });
+    }
+
+    return res.status(200).json({ success: true, chat: chat });
+  }catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}
 
 const saveChat = async (req, res) => {
   const { token, content, imageUrl, chatkey, sender, newchat } = req.body;
@@ -35,6 +67,8 @@ const saveChat = async (req, res) => {
       const newMessage = await Message.create({
         chat_id: newChatId,
         content: "User : " + content,
+        owner: sender,
+        image_url: imageUrl,
       });
     } else if (chatkey) {
       const chat = await Chat.findOne({
@@ -51,6 +85,8 @@ const saveChat = async (req, res) => {
       const newMessage = await Message.create({
         chat_id: chat.id,
         content: sender + ": " + content,
+        owner: sender,
+        image_url: imageUrl,
       });
     }
 
@@ -130,6 +166,26 @@ const saveChat = async (req, res) => {
 
 //   return res.status(200).json({ success: true });
 // };
+
+const getPromptImg = async (req, res) => {
+  const { token } = req.body;
+  const { prompt } = req.body;
+
+  var errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg);
+    return res.status(400).json({ success: false, errors: errorMessages });
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+    const response = await axios.get('https://api.example.com/data');
+
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}
 
 
 const uploadImageToS3 = async (imageUrl) => {
@@ -240,5 +296,7 @@ const prevoiusChats = async (req, res) => {
 module.exports = {
   imgUpload,
   saveChat,
-  prevoiusChats
+  prevoiusChats,
+  getPromptImg,
+  getChat
 };
