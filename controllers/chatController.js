@@ -30,14 +30,14 @@ const getChat = async (req, res) => {
       include: [{
         model: Message
       }]
-    })  
+    })
 
     if (!chat) {
       return res.status(500).json({ success: false, error: 'No chat with this key' });
     }
 
     return res.status(200).json({ success: true, chat: chat });
-  }catch (error) {
+  } catch (error) {
     return res.status(500).json({ success: false, error: error.message });
   }
 }
@@ -180,7 +180,22 @@ const getPromptImg = async (req, res) => {
   try {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-    const response = await axios.get('https://api.example.com/data');
+    const endpointUrl = process.env.PYTHON_SERVER_URL + "generate_website";
+    const requestData = {
+      prompt: prompt,
+      category: "landingpage"
+    };
+
+    axios.post(endpointUrl, requestData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      }
+    }).then(response => {
+      return res.status(200).json({ 'image': response.data.image });
+    }).catch(error => {
+      return res.status(500).json({ success: false, error: error });
+    });
 
   } catch (error) {
     return res.status(500).json({ success: false, error: error.message });
