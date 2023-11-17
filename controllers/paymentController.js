@@ -63,10 +63,9 @@ const createPayment = async (req, res) => {
   const paymentIntent = await stripe.paymentIntents.create({
     amount: calculateOrderAmount(items),
     currency: "usd",
-    payment_method_types: ['us_bank_account'],
-    // automatic_payment_methods: {
-    //   enabled: true,
-    // },
+    automatic_payment_methods: {
+      enabled: true,
+    },
     metadata: {
       token: token,
     },
